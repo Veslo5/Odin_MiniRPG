@@ -12,6 +12,15 @@
             "initCommands": [
                 "settings set target.disable-aslr false"
             ]
+        },
+        {
+            "name": "Debug MSVC",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}/bin/Odin_MiniRPG.exe",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "preLaunchTask": "Build debug"
         }
     ]
 }

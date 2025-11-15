@@ -1,33 +1,74 @@
 {
-	"version": "2.0.0",
-	"tasks": [
-		{
-			"label": "Build debug",
-			"type": "shell",
-			"command": "odin",
-			"args": [
-				"build",
-				".",
-				"-show-timings",
-				"-debug",
-				"-out:bin/Odin_MiniRPG"
-			],
-			"problemMatcher": [],
-			"group": "build"
-		},
-		{
-			"label": "Run debug",
-			"type": "shell",
-			"command": "odin",
-			"args": [
-				"run",
-				".",
-				"-show-timings",
-				"-debug",
-				"-out:bin/Odin_MiniRPG"
-			],
-			"problemMatcher": [],
-			"group": "build"
-		}
-	]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build debug",
+            "type": "shell",
+            "windows": {
+                "command": "odin",
+                "args": [
+                    "build",
+                    ".",
+                    "-show-timings",
+                    "-debug",
+                    "-out:bin/Odin_MiniRPG.exe",
+                    "-build-mode:exe",
+                    // "-extra-linker-flags:/SUBSYSTEM:WINDOWS" // to not open console window
+                ]
+            },
+            "osx": {
+                "command": "odin",
+                "args": [
+                    "build",
+                    ".",
+                    "-show-timings",
+                    "-debug",
+                    "-out:bin/Odin_MiniRPG",
+                    "-build-mode:exe"
+                ]
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "dependsOn": "Create folder structure"
+        },
+        {
+            "label": "Run debug",
+            "type": "shell",
+            "windows": {
+                "command": "odin",
+                "args": [
+                    "run",
+                    ".",
+                    "-show-timings",
+                    "-debug",
+                    "-out:bin/Odin_MiniRPG.exe"
+                ]
+            },
+            "osx": {
+                "command": "odin",
+                "args": [
+                    "run",
+                    ".",
+                    "-show-timings",
+                    "-debug",
+                    "-out:bin/Odin_MiniRPG"
+                ]
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "dependsOn": "Create folder structure"
+        },
+        {
+            "label": "Create folder structure",
+            "type": "shell",
+            "windows": {
+                "command": "if (!(Test-Path bin\\assets)) { mkdir bin\\assets } ; if (Test-Path assets) { Copy-Item assets\\* bin\\assets -Recurse -Force }"
+            },
+            "osx": {
+                "command": "mkdir -p bin && [ -d assets ] && cp -r assets bin/assets || true"
+            },
+            "problemMatcher": [],
+            "hide": true
+        },
+    ]
 }
