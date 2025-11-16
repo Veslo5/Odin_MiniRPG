@@ -1,8 +1,10 @@
 package core
 
 Scene :: struct {
-	load:   proc(),
-	update: proc(dt: f32, core_game: ^Game_Data),
-	draw:   proc(),
-	unload: proc(),
+	name:   string,
+	load:   proc(scene: ^Scene),
+	update: proc(dt: f32, scene: ^Scene, core_game: ^Game_Data),
+	draw:   proc(scene: ^Scene),
+	unload: proc(scene: ^Scene),
+	data:   rawptr,
 }

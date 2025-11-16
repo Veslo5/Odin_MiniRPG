@@ -65,7 +65,7 @@
                 "command": "if (!(Test-Path bin\\assets)) { mkdir bin\\assets } ; if (Test-Path assets) { Copy-Item assets\\* bin\\assets -Recurse -Force }"
             },
             "osx": {
-                "command": "mkdir -p bin && [ -d assets ] && cp -r assets bin/assets || true"
+                "command": "mkdir -p bin/assets && [ -d assets ] && cp -r assets/. bin/assets/ || true"
             },
             "problemMatcher": [],
             "hide": true

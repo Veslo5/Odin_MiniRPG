@@ -23,17 +23,7 @@ main :: proc() {
 		}
 	}
 
-	scene_manager := core.Scene_Manager {
-		scenes         = make(map[string]^core.Scene),
-		pending_change = false,
-	}
-	defer delete(scene_manager.scenes)
-
-	main_menu_scene := game.main_menu_new()
-	defer free(main_menu_scene)
-
-	splash_screen_scene := game.splash_screen_new()
-	defer free(splash_screen_scene)
+	scene_manager := init_scene_manager()
 
 	game_data := core.Game_Data {
 		scene_manager = &scene_manager,
@@ -42,19 +32,16 @@ main :: proc() {
 	rl.InitWindow(800, 600, "Odin MiniRPG")
 	rl.SetTargetFPS(60)
 
-	// TODO: Make loading scenes more readable
-	scene_manager.scenes[game.SCENE_NAME_MAIN_MENU] = main_menu_scene
-
-	scene_manager.scenes[game.SCENE_NAME_SPLASH_SCREEN] = splash_screen_scene
-	scene_manager.current_scene = splash_screen_scene
-	scene_manager.current_scene.load()
-
 	for !rl.WindowShouldClose() {
-		scene_manager.current_scene.update(rl.GetFrameTime(), &game_data)
+		scene_manager.current_scene.update(
+			rl.GetFrameTime(),
+			scene_manager.current_scene,
+			&game_data,
+		)
 
 		rl.BeginDrawing()
 		rl.ClearBackground(rl.RAYWHITE)
-		scene_manager.current_scene.draw()
+		scene_manager.current_scene.draw(scene_manager.current_scene)
 		rl.EndDrawing()
 
 		if scene_manager.pending_change {
@@ -62,5 +49,37 @@ main :: proc() {
 		}
 	}
 
+	scene_manager.current_scene.unload(scene_manager.current_scene)
+	delete_scene_manager(&scene_manager)
+
 	rl.CloseWindow()
+}
+
+@(private = "file")
+init_scene_manager :: proc() -> core.Scene_Manager {
+	scene_manager := core.Scene_Manager {
+		scenes         = make(map[string]^core.Scene),
+		pending_change = false,
+	}
+
+	main_menu_scene := game.main_menu_new()
+	splash_screen_scene := game.splash_screen_new()
+	editor_scene := game.map_editor_new()
+
+	scene_manager.scenes[game.SCENE_NAME_MAIN_MENU] = main_menu_scene
+	scene_manager.scenes[game.SCENE_NAME_SPLASH_SCREEN] = splash_screen_scene
+	scene_manager.scenes[game.SCENE_NAME_MAP_EDITOR] = editor_scene
+
+	scene_manager.current_scene = splash_screen_scene
+	scene_manager.current_scene.load(scene_manager.current_scene)
+
+	return scene_manager
+}
+
+delete_scene_manager :: proc(scene_manager: ^core.Scene_Manager) {
+	for _, scene in scene_manager.scenes {
+		free(scene)
+	}
+
+	delete(scene_manager.scenes)
 }
